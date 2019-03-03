@@ -1,0 +1,97 @@
+presto:
+  # Name of the environment. All Presto nodes in a cluster must have the same
+  # environment name.
+  environment: "production"
+
+  # Number of worker containers (nodes) to launch to start. This can be scaled
+  # later if desired.
+  workers: 2
+
+  # Logging level for the presto service on each node. Should be one of
+  # "DEBUG", "INFO", "WARN", or "ERROR".
+  logLevel: "WARN"
+
+image:
+  # Docker Repository of the docker image that will be used in the Presto
+  # coordinator and worker deployments.
+  repository: "wiwdata/presto"
+
+  # Tag of the docker image that will be used by the coordinator and worker
+  # deployments.
+  tag: "0.217"
+
+  # The image pull policy for the worker and coordinator deployments.
+  pullPolicy: "Always"
+
+containerSpec: {}
+
+service:
+  type: ClusterIP
+
+# catalog defines the connectors available.
+catalog: {}
+#  hive.properties: |
+#    connector.name=hive-hadoop2
+#    hive.metastore-cache-ttl=20m
+#    hive.non-managed-table-writes-enabled=false
+#    hive.s3-file-system-type=PRESTO
+#    hive.hdfs.impersonation.enabled=true
+#    hive.metastore=glue
+
+# coordinatorConfigs are configuration file values applied to the coordinator
+# container. Required and recommended defaults will be applied where any of
+# these are missing. For more details on files and options see:
+# https://prestodb.github.io/docs/current/installation/deployment.html
+coordinatorConfigs: {}
+#  config.properties: |
+#    http-server.log.max-size=10MB
+#    http-server.log.max-history=5
+
+# workerConfigs are configuration file values applied to the worker
+# containers. Required and recommended defaults will be applied where any of
+# these are missing. For more details on files and options see:
+# https://prestodb.github.io/docs/current/installation/deployment.html
+workerConfigs: {}
+
+
+# Additional environment variables to include in the containers.
+environmentVariables:
+#  - name: SECRET_USERNAME
+#    valueFrom:
+#      secretKeyRef:
+#        name: test-secret
+#        key: username
+
+
+coordinatorResources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+workerResources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+coordinatorNodeSelector: {}
+workerNodeSelector: {}
+
+coordinatorTolerations: []
+workerTolerations: {}
+
+coordinatorAffinity: {}
+workerAffinity: {}

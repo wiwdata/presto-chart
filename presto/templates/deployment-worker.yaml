@@ -1,0 +1,73 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "presto.worker" . }}
+  labels:
+    app: {{ template "presto.name" . }}
+    chart: {{ template "presto.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: worker
+spec:
+  replicas: {{ default 0 .Values.presto.workers }}
+  selector:
+    matchLabels:
+      app: {{ template "presto.name" . }}
+      release: {{ .Release.Name }}
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: {{ template "presto.name" . }}
+        release: {{ .Release.Name }}
+        component: worker
+    spec:
+{{ toYaml .Values.containerSpec | indent 6 }}
+      volumes:
+        - name: catalog-volume
+          configMap:
+            name: {{ template "presto.name" . }}-catalog
+        - name: configs-volume
+          configMap:
+            name: {{ template "presto.worker" . }}
+      containers:
+        - name: {{ .Chart.Name }}-worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["python3", "presto-entrypoint.py"]
+          args:
+            - "--environment={{ default "production" .Values.presto.environment }}"
+            - "--discovery-uri={{ template "presto.fullname" . }}"
+            - "--log-level={{ default "ERROR" .Values.presto.logLevel }}"
+          tty: true
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+{{ toYaml .Values.environmentVariables | indent 12 }}
+          volumeMounts:
+            - mountPath: /presto/templates/catalog
+              name: catalog-volume
+            - mountPath: /presto/templates/custom_configs
+              name: configs-volume
+          resources:
+{{ toYaml .Values.workerResources | indent 12 }}
+    {{- with .Values.workerNodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.workerAffinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.workerTolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+
+---

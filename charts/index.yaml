@@ -1,0 +1,19 @@
+apiVersion: v1
+entries:
+  presto:
+  - apiVersion: v1
+    created: 2019-03-03T14:42:11.3460718-06:00
+    description: Distributed SQL query engine for running interactive analytic queries
+    digest: f9e484a68b1f5cf5f446e5d24893edb2ea6d8430bc4bded159568568b2949549
+    home: https://prestodb.io
+    icon: https://prestodb.io/static/presto.png
+    maintainers:
+    - email: data@wheniwork.com
+      name: Scott Ernst
+    name: presto
+    sources:
+    - https://github.com/facebook/presto
+    urls:
+    - presto-1.tgz
+    version: "1"
+generated: 2019-03-03T14:42:11.3450725-06:00
