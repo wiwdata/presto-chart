@@ -1,34 +1,48 @@
 presto:
-  # Name of the environment. All Presto nodes in a cluster must have the same
-  # environment name.
+  # environment is the name given to the presto environment within all presto nodes 
+  # (containers). This value can be used to more easily distinguish colocated 
+  # installations. This value isn't as useful in kubernetes where installs are
+  # already distinguished by kubernetes and helm. The most useful place for this
+  # is in the presto web UI to identify the installation.
   environment: "production"
 
-  # Number of worker containers (nodes) to launch to start. This can be scaled
-  # later if desired.
+  # workers specifies the number of worker nodes (containers) to launch during 
+  # installation. This can be scaled later if desired.
   workers: 2
 
-  # Logging level for the presto service on each node. Should be one of
-  # "DEBUG", "INFO", "WARN", or "ERROR".
-  logLevel: "WARN"
+  # logLevel is the logging level for the presto service on each node. Should be 
+  # one of "DEBUG", "INFO", "WARN", or "ERROR".
+  logLevel: "INFO"
 
 image:
-  # Docker Repository of the docker image that will be used in the Presto
+  # repository is the name of the docker image that will be used in the Presto
   # coordinator and worker deployments.
   repository: "wiwdata/presto"
 
-  # Tag of the docker image that will be used by the coordinator and worker
+  # tag of the docker image that will be used by the coordinator and worker
   # deployments.
   tag: "0.217"
 
-  # The image pull policy for the worker and coordinator deployments.
+  # pullPolicy specifies the image pull policy for both the worker and 
+  # coordinator deployment containers.
   pullPolicy: "Always"
 
+# containerSpec allows for adding arbitrary yaml to the spec under which the
+# coordinator and worker definitions reside. This can be useful in cases where
+# private registry credentials are necessary pulling images.
 containerSpec: {}
 
 service:
   type: ClusterIP
 
-# catalog defines the connectors available.
+# catalog defines the connectors available within the presto environment.
+# Specify each value as a NAME.properties key and the values as the desired
+# contents of that catalog file. These will be loaded into the image as the
+# connector files. Prior to loading them in as connectors, they will be 
+# rendered by Jinja2 using any supplied environment variables in the container
+# that begin with the prefixes USER_ or SECRET_. This can be used to
+# include secrets in catalog files at runtime using standard kubernetes
+# secret mapping techniques.
 catalog: {}
 #  hive.properties: |
 #    connector.name=hive-hadoop2
@@ -42,15 +56,20 @@ catalog: {}
 # container. Required and recommended defaults will be applied where any of
 # these are missing. For more details on files and options see:
 # https://prestodb.github.io/docs/current/installation/deployment.html
+#
+# If a jvm.config is specified here it will fully override the default
+# jvm.config bcause unlike the other properties independent settings are
+# not necessarily compatible and could lead to unstable behavior.
+#
+# These values are rendered with Jinja2 just like the catalog values above
+# to allow for greater flexibility in runtime configuration.
 coordinatorConfigs: {}
 #  config.properties: |
 #    http-server.log.max-size=10MB
 #    http-server.log.max-history=5
 
-# workerConfigs are configuration file values applied to the worker
-# containers. Required and recommended defaults will be applied where any of
-# these are missing. For more details on files and options see:
-# https://prestodb.github.io/docs/current/installation/deployment.html
+# workerConfigs are configuration file values applied to the worker containers.
+# This has the same behaviors as the coordinatorConfigs defined above.
 workerConfigs: {}
 
 
