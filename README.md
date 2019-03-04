@@ -15,17 +15,21 @@ but significantly altered for greater flexibility:
   injection of environmental data. Particularly useful for
   rendering secrets into configurations and connectors via
   container environment variables.
+  
+Check out the example [values.yaml](presto/values.yaml) file for 
+more detailed documentation and examples of how the above chamges
+work.
 
-# Chart Installation
+# Basic Chart Installation
 
 This chart is packaged for easy install and any of the packaged versions stored
 in the [charts](charts) directory can be installed via their download URL:
 
 ```bash
 $ helm install \
-  --name my-presto
-  --namespace my-presto-namespace
-  --values values.yaml
+  --name my-presto \
+  --namespace my-presto-namespace \
+  --values values.yaml \
   https://github.com/wiwdata/presto-chart/raw/master/charts/presto-1.tgz
 ```
 
