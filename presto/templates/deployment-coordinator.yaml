@@ -21,7 +21,9 @@ spec:
         release: {{ .Release.Name }}
         component: coordinator
     spec:
+{{ if .Values.containerSpec }}
 {{ toYaml .Values.containerSpec | indent 6 }}
+{{ end }}
       volumes:
         - name: catalog-volume
           configMap:
@@ -53,7 +55,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+{{ if .Values.environmentVariables }}
 {{ toYaml .Values.environmentVariables | indent 12 }}
+{{ end }}
           volumeMounts:
             - mountPath: /presto/templates/catalog
               name: catalog-volume
