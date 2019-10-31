@@ -61,7 +61,7 @@ spec:
           volumeMounts:
             - mountPath: /presto/templates/catalog
               name: catalog-volume
-            - mountPath: /presto/templates/custom_configs
+            - mountPath: /presto/templates/custom_conf
               name: config-volume
           resources:
 {{ toYaml .Values.coordinatorResources | indent 12 }}
