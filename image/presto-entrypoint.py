@@ -3,6 +3,7 @@
 import argparse
 import glob
 import os
+from pathlib import Path
 import shutil
 import subprocess
 import textwrap
@@ -116,6 +117,16 @@ def bootstrap(arguments: dict):
             custom_directory=TEMPLATE_CUSTOM_DIRECTORY,
             **arguments
         )
+    ## Render custom configs that don't have a default template
+    default_config_names = {
+        path.stem for path in Path(TEMPLATE_DEFAULT_DIRECTORY).glob("*.properties.jinja2")}
+    for custom_config_path in Path(TEMPLATE_CUSTOM_DIRECTORY).glob("*.properties"):
+        if custom_config_path.name not in default_config_names:
+            render(
+                template_name=str(custom_config_path.relative_to(Path(TEMPLATE_DIRECTORY))),
+                output_directory=CONFIGS_DIRECTORY,
+                **arguments
+            )
 
     print('\n--- Boostrapping Catalog Files ---')
     glob_path = os.path.join(TEMPLATE_CATALOG_DIRECTORY, '*.properties')
