@@ -114,6 +114,7 @@ venv.bak/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -165,4 +166,3 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
-
