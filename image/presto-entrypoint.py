@@ -117,13 +117,17 @@ def bootstrap(arguments: dict):
             custom_directory=TEMPLATE_CUSTOM_DIRECTORY,
             **arguments
         )
-    ## Render custom configs that don't have a default template
+    # Render custom configs that don't have a default template
+    default_directory = Path(TEMPLATE_DEFAULT_DIRECTORY)
     default_config_names = {
-        path.stem for path in Path(TEMPLATE_DEFAULT_DIRECTORY).glob("*.properties.jinja2")}
-    for custom_config_path in Path(TEMPLATE_CUSTOM_DIRECTORY).glob("*.properties"):
-        if custom_config_path.name not in default_config_names:
+        path.stem
+        for path in default_directory.glob("*.properties.jinja2")
+    }
+    custom_directory = Path(TEMPLATE_CUSTOM_DIRECTORY)
+    for path in custom_directory.glob("*.properties"):
+        if path.name not in default_config_names:
             render(
-                template_name=str(custom_config_path.relative_to(Path(TEMPLATE_DIRECTORY))),
+                template_name=str(path.relative_to(Path(TEMPLATE_DIRECTORY))),
                 output_directory=CONFIGS_DIRECTORY,
                 **arguments
             )
